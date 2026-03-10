@@ -9,7 +9,7 @@ Batch token transfer dApp for OPNet Bitcoin L1. Send tokens to up to 100 address
 ## 🚀 Quick Start
 
 ### Open in GitHub Codespaces
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/YOUR_USERNAME/opnet-multisend)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/tphuongtruong17-boop/opnet-multisend)
 
 ### Deploy
 1. Go to **Actions** tab
