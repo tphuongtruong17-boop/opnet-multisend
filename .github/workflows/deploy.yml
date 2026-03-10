@@ -1,0 +1,62 @@
+name: Deploy OPNet dApp
+
+on:
+  workflow_dispatch:
+    inputs:
+      network:
+        description: 'Network'
+        required: true
+        default: 'testnet'
+        type: choice
+        options:
+          - testnet
+          - mainnet
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile Contract
+        run: |
+          npm install -g @btc-vision/opnet-cli
+          opnet-cli compile --contract Multisend || echo "Using pre-compiled"
+
+      - name: Build Frontend
+        env:
+          VITE_CONTRACT_ADDRESS: ${{ secrets.CONTRACT_ADDRESS }}
+          VITE_NETWORK: ${{ github.event.inputs.network }}
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Save Deployment Info
+        run: |
+          echo "Deployed to: ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo "Network: ${{ github.event.inputs.network }}" >> $GITHUB_STEP_SUMMARY
